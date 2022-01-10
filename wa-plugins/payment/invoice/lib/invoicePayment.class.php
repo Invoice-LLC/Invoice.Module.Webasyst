@@ -103,7 +103,8 @@ class invoicePayment extends waPayment implements waIPayment
             $request->defaultPrice = 0;
             $response = $this->getRestClient()->CreateTerminal($request);
 
-            if($response == null or isset($response->error)) throw new Exception("Terminal error");
+            if($response == null or isset($response->error)) 
+                throw new Exception("Terminal error ".$response->error);
 
             $tid = $response->id;
             file_put_contents('invoice_tid', $tid);
