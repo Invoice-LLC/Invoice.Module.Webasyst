@@ -98,6 +98,9 @@ class invoicePayment extends waPayment implements waIPayment
 
         if($tid == null or empty($tid)) {
             $request = new CREATE_TERMINAL($this->invoice_default_terminal_name);
+            $request->type = "dynamical";
+            $request->description = "";
+            $request->defaultPrice = 0;
             $response = $this->getRestClient()->CreateTerminal($request);
 
             if($response == null or isset($response->error)) throw new Exception("Terminal error");
