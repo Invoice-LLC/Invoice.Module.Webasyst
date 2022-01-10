@@ -34,11 +34,8 @@ class RestClient
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Host: pay.invoice.su",
             "content-type: application/json",
-            "Authorization: Basic ".$auth,
-            "User-Agent: curl/7.55.1",
-            "Accept: */*"
+            "Authorization: Basic ".$auth
         ]);
 
         curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
