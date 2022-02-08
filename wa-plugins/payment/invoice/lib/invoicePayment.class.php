@@ -43,6 +43,9 @@ class invoicePayment extends waPayment implements waIPayment
 
     protected function callbackInit($request)
     {
+        $this->merchant_id = '*';
+        $this->order_id = $request['order']['id'];
+        
         return parent::callbackInit($request);
     }
 
@@ -58,38 +61,46 @@ class invoicePayment extends waPayment implements waIPayment
         $signature = $notification["signature"];
 
         if($signature != $this->getSignature($notification["id"], $notification["status"], $this->invoice_api_key)) {
-            return "Wrong signature";
+            return $this->getResponse('wrong signature');
         }
 
         if($type == "pay") {
 
             if($notification["status"] == "successful") {
-                $this->pay($data);
-                return "payment successful";
+                $this->pay($data, $notification);
+                return $this->getResponse('payment successful');
             }
             if($notification["status"] == "error") {
-                return "payment failed";
+                return $this->getResponse('payment failed');
             }
         }
 
         return "null";
     }
 
-    public function pay($params) {
-        $transaction_data = $this->formalizeData($params);
+    public function pay($params, $notification) {
+        $transaction_data = $this->formalizeData($params, $notification);
         $transaction_data = $this->saveTransaction($transaction_data, $params);
         $this->execAppCallback(self::CALLBACK_PAYMENT, $transaction_data);
     }
 
-    public function formalizeData($params)
+    public function formalizeData($params, $notification)
     {
         $transaction_data = parent::formalizeData($params);
+        $transaction_data['amount'] = $notification['order']['amount'];
         $transaction_data['order_id'] = $this->orderId;
         $transaction_data['type'] = self::OPERATION_CAPTURE;
         $transaction_data['state'] = self::STATE_CAPTURED;
-        $transaction_data['currency_id'] = $params['orderCurrency'];
+        $transaction_data['currency_id'] = 'RUB';
+        $transaction_data['native_id'] = $this->orderId;
 
         return $transaction_data;
+    }
+    
+    protected function getResponse($msg) {
+        return array(
+                'message' => $msg
+            );
     }
 
     public function getTerminal() {
