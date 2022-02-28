@@ -104,8 +104,10 @@ class invoicePayment extends waPayment implements waIPayment
     }
 
     public function getTerminal() {
-        if(!file_exists('invoice_tid')) file_put_contents('invoice_tid', '');
-        $tid = file_get_contents('invoice_tid');
+        $file = 'invoice_tid_'.$this->invoice_login;
+        
+        if(!file_exists($file)) file_put_contents($file, '');
+        $tid = file_get_contents($file);
 
         if($tid == null or empty($tid)) {
             $request = new CREATE_TERMINAL($this->invoice_default_terminal_name);
@@ -118,7 +120,7 @@ class invoicePayment extends waPayment implements waIPayment
                 throw new Exception("Terminal error ".$response->error);
 
             $tid = $response->id;
-            file_put_contents('invoice_tid', $tid);
+            file_put_contents($file, $tid);
         }
 
         return $tid;
