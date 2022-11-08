@@ -26,7 +26,7 @@ class invoicePayment extends waPayment implements waIPayment
         $id = $order->id;
 
         $invoice_order = new INVOICE_ORDER($amount);
-        $invoice_order->id = $id;
+        $invoice_order->id = $id ."-". md5($id);
         $settings = new SETTINGS($this->getTerminal());
         $settings->success_url = ( ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
 
@@ -57,7 +57,6 @@ class invoicePayment extends waPayment implements waIPayment
         $id = $notification["order"]["id"];
         $this->orderId = $id;
 
-
         $signature = $notification["signature"];
 
         if($signature != $this->getSignature($notification["id"], $notification["status"], $this->invoice_api_key)) {
@@ -79,12 +78,12 @@ class invoicePayment extends waPayment implements waIPayment
     }
 
     public function pay($params, $notification) {
-        $transaction_data = $this->formalizeData($params, $notification);
+        $transaction_data = $this->formData($params, $notification);
         $transaction_data = $this->saveTransaction($transaction_data, $params);
         $this->execAppCallback(self::CALLBACK_PAYMENT, $transaction_data);
     }
 
-    public function formalizeData($params, $notification)
+    public function formData($params, $notification)
     {
         $transaction_data = parent::formalizeData($params);
         $transaction_data['amount'] = $notification['order']['amount'];
