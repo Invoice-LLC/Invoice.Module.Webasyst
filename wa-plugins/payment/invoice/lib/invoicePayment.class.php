@@ -4,6 +4,7 @@ require "InvoiceSDK/common/SETTINGS.php";
 require "InvoiceSDK/common/ORDER.php";
 require "InvoiceSDK/CREATE_TERMINAL.php";
 require "InvoiceSDK/CREATE_PAYMENT.php";
+require "InvoiceSDK/GET_TERMINAL.php";
 
 class invoicePayment extends waPayment implements waIPayment
 {
@@ -107,8 +108,11 @@ class invoicePayment extends waPayment implements waIPayment
         
         if(!file_exists($file)) file_put_contents($file, '');
         $tid = file_get_contents($file);
+        $terminal = new GET_TERMINAL();
+        $terminal->alias =  $tid;
+        $info = $this->getRestClient()->GetTerminal($terminal);
 
-        if($tid == null or empty($tid)) {
+        if($tid == null or empty($tid) || $info->id == null || $info->id != $terminal->alias) {
             $request = new CREATE_TERMINAL($this->invoice_default_terminal_name);
             $request->type = "dynamical";
             $request->description = "";
