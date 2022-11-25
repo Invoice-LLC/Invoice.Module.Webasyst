@@ -3,8 +3,8 @@
 return array(
     'invoice_login' => array(
         'value'        => '',
-        'title'        => 'Login',
-        'description'  => 'Логин от ЛК Invoice',
+        'title'        => 'Merchant ID',
+        'description'  => 'Merchant ID(Можно взять из ЛК Invoice)',
         'control_type' => 'input',
         'class'        => 'keys',
     ),
