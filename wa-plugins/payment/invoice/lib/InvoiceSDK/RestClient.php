@@ -35,7 +35,8 @@ class RestClient
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "content-type: application/json",
-            "Authorization: Basic ".$auth
+            "Authorization: Basic ".$auth,
+            "User-Agent: Invoice.Webasyst"
         ]);
 
         curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);

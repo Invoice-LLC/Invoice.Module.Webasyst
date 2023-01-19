@@ -27,7 +27,7 @@ class invoicePayment extends waPayment implements waIPayment
         $id = $order->id;
 
         $invoice_order = new INVOICE_ORDER($amount);
-        $invoice_order->id = $id ."-". md5($id);
+        $invoice_order->id = "$id" . "-" . bin2hex(random_bytes(5));
         $settings = new SETTINGS($this->getTerminal());
         $settings->success_url = ( ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']);
 
@@ -55,7 +55,7 @@ class invoicePayment extends waPayment implements waIPayment
         $notification = $this->getNotification();
 
         $type = $notification["notification_type"];
-        $id = $notification["order"]["id"];
+        $id = strstr($notification["order"]["id"], "-", true);
         $this->orderId = $id;
 
         $signature = $notification["signature"];
